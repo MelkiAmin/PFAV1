@@ -1,0 +1,43 @@
+# Node
+node_modules/
+dist/
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+prisma/dev.db
+
+# Docker
+*.local
+
+# VSCode
+.vscode/
+
+# Others
+coverage/
+
+# Ignore database files
+*.sqlite
+*.db
+
+# Ignore build artifacts
+build/
+
+# Ignore by service
+email-service/node_modules/
+email-service/dist/
+email-service/.env
+pdf-service/node_modules/
+pdf-service/dist/
+pdf-service/.env
