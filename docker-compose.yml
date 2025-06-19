@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  email-db:
+    image: postgres:16
+    container_name: email-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: email_service
+    ports:
+      - "5433:5432"
+    volumes:
+      - email-db-data:/var/lib/postgresql/data
+
+  pdf-db:
+    image: postgres:16
+    container_name: pdf-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pdf_service
+    ports:
+      - "5434:5432"
+    volumes:
+      - pdf-db-data:/var/lib/postgresql/data
+
+  email-service:
+    build:
+      context: ./email-service
+    container_name: email-service
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://user:password@email-db:5432/email_service
+      - ETHEREAL_USER=${ETHEREAL_USER}
+      - ETHEREAL_PASS=${ETHEREAL_PASS}
+    depends_on:
+      - email-db
+    restart: unless-stopped
+
+  pdf-service:
+    build:
+      context: ./pdf-service
+    container_name: pdf-service
+    ports:
+      - "3002:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://user:password@pdf-db:5432/pdf_service
+    depends_on:
+      - pdf-db
+      - pulsar
+    restart: unless-stopped
+
+  pulsar:
+    image: apachepulsar/pulsar:3.2.0
+    container_name: pulsar
+    command: bin/pulsar standalone
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+
+volumes:
+  email-db-data:
+  pdf-db-data:
